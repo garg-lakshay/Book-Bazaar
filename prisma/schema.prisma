@@ -12,3 +12,27 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model User {
+  id        String    @id @default(cuid())
+  name      String 
+  email     String    @unique
+  password  String    
+  role      String    // "owner" | "admin" | "user"
+  verified  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  street   String?
+  city     String?
+  state    String?
+  zipCode  String?
+  country  String?
+
+  books     Book[]     
+  orders    Order[]
+  cartItems CartItem[]
+  tokens    VerificationToken[]
+  stripe    StripeAccount?
+}
+
