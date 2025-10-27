@@ -81,6 +81,7 @@ model CartItem {
   bookId   String
   quantity Int      @default(1)
   addedAt  DateTime @default(now())
+  @@unique([userId, bookId]) // ensures one item per user-book pair
 }
 
 model Order {

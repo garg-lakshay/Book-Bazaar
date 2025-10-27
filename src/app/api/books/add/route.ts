@@ -83,20 +83,54 @@
 // }
 // export const POST = authMiddleware(["SELLER"])(handler)
 
+// import { NextResponse } from "next/server";
+// import prisma from "@/lib/prisma";
+// import { AuthenticatedNextRequest } from "@/lib/types";
+// import { verifyAuth } from "@/lib/authmiddleware";
+
+// export async function handler(req: AuthenticatedNextRequest) {
+//   const auth = await verifyAuth(req, ["SELLER"]);
+//   if (!auth.ok) return auth.res!;
+//   const { title, author, price, stock, description } = await req.json();
+
+//   if (!title || !author || !price || !stock) {
+//     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+//   }
+
+//   const user = req.user;
+
+//   const newBook = await prisma.book.create({
+//     data: {
+//       title,
+//       author,
+//       price: Number(price),
+//       stock: Number(stock),
+//       description: description || "",
+//       sellerId: user.id,
+//       ownerId: user.id,
+//     },
+//   });
+
+//   return NextResponse.json({ message: "Book added!", book: newBook }, { status: 201 });
+// }
+// app/api/books/add/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { verifyAuth } from "@/lib/authmiddleware";
 import { AuthenticatedNextRequest } from "@/lib/types";
-import { authMiddleware } from "@/lib/authmiddleware";
 
-async function handler(req: AuthenticatedNextRequest) {
+export async function POST(req: AuthenticatedNextRequest) {
+  // ✅ Step 1: Verify token and role
+  const auth = await verifyAuth(req, ["SELLER"]);
+  if (!auth.ok) return auth.res!; // Stop if unauthorized
+
+  // ✅ Step 2: Extract book details
   const { title, author, price, stock, description } = await req.json();
-
   if (!title || !author || !price || !stock) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const user = req.user;
-
+  // ✅ Step 3: Create book
   const newBook = await prisma.book.create({
     data: {
       title,
@@ -104,14 +138,15 @@ async function handler(req: AuthenticatedNextRequest) {
       price: Number(price),
       stock: Number(stock),
       description: description || "",
-      sellerId: user.id,
-      ownerId: user.id,
+      sellerId: auth.req!.user.id,
+      ownerId: auth.req!.user.id,
     },
   });
 
-  return NextResponse.json({ message: "Book added!", book: newBook }, { status: 201 });
+  return NextResponse.json({ message: "Book added successfully!", book: newBook }, { status: 201 });
 }
 
-// ✅ Protect this route
-export const POST = authMiddleware(["SELLER"])(handler);
+
+
+
 
