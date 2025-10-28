@@ -2,7 +2,6 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { AuthenticatedNextRequest } from "@/lib/types";
 import { verifyAuth } from "@/lib/authmiddleware";  
-import { UNABLE_TO_FIND_POSTINSTALL_TRIGGER__EMPTY_STRING } from "@prisma/client/scripts/postinstall.js";
 
 export async function GET(req:AuthenticatedNextRequest){
     const authResult = await verifyAuth (req,["USER","SELLER"]);

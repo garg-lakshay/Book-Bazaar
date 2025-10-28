@@ -20,9 +20,9 @@ export async function POST(req:Request){
         }
 
         const token = jwt.sign(
-            {id:user.id,email:user.email,role:user.role},
+            {id:user.id,email:user.email,role:user.role.toUpperCase() || "USER"},
             process.env.JWT_SECRET!,
-            {expiresIn: "1hr"}
+            {expiresIn: "1h"}
         );
         return NextResponse.json({message:"Login Sucessfully",
             token,
@@ -30,7 +30,7 @@ export async function POST(req:Request){
                 id:user.id,
                 name:user.name,
                 email:user.email,
-                role:user.role
+                role:user.role.toUpperCase()
             }
         })
 
