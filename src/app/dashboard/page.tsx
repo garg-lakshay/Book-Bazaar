@@ -103,13 +103,12 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
-  BookOpen,
-  Users,
   LogOut,
   Moon,
   Sun,
   Plus,
   ShoppingCart,
+  Package,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -131,14 +130,13 @@ const DashboardPage: React.FC = () => {
   const [newBook, setNewBook] = useState({ title: "", author: "", price: "" });
   const [loading, setLoading] = useState(false);
 
-  // 🟢 Load user & fetch books
+  // Load user & fetch books
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
     fetchBooks();
   }, []);
 
-  // 🟣 Fetch all books
   const fetchBooks = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -148,15 +146,13 @@ const DashboardPage: React.FC = () => {
       if (res.ok) {
         const data = await res.json();
         setBooks(data.books || []);
-      } else {
-        console.warn("Failed to load books");
       }
     } catch (err) {
       console.error("Error fetching books:", err);
     }
   };
 
-  // 🟠 Add new book (for seller)
+  // Add new book (for seller)
   const handleAddBook = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -173,8 +169,6 @@ const DashboardPage: React.FC = () => {
       if (res.ok) {
         setNewBook({ title: "", author: "", price: "" });
         fetchBooks();
-      } else {
-        console.error("Failed to add book");
       }
     } catch (err) {
       console.error(err);
@@ -183,7 +177,7 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  // 🛒 Add to cart
+  // Add to cart
   const handleAddToCart = (book: Book) => {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const existing = cart.find((item: Book) => item.id === book.id);
@@ -221,16 +215,17 @@ const DashboardPage: React.FC = () => {
             <LayoutDashboard className="w-6 h-6" /> Dashboard
           </h2>
 
-          <nav className="space-y-4">
-            <SidebarItem icon={<BookOpen />} text="Books" />
-            <SidebarItem icon={<Users />} text="Users" />
-            <button
+          <nav className="space-y-3">
+            <SidebarItem
+              icon={<Package className="w-5 h-5" />}
+              text="My Orders"
+              onClick={() => router.push("/my-orders")}
+            />
+            <SidebarItem
+              icon={<ShoppingCart className="w-5 h-5" />}
+              text="Go to Cart"
               onClick={() => router.push("/cart")}
-              className="flex items-center gap-3 w-full text-left px-4 py-2 rounded-lg hover:bg-purple-100 dark:hover:bg-gray-700 transition"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              <span>Go to Cart</span>
-            </button>
+            />
           </nav>
         </div>
 
@@ -347,7 +342,6 @@ const DashboardPage: React.FC = () => {
                     Seller: {book.sellerName}
                   </p>
 
-                  {/* 👇 Added buttons */}
                   <div className="mt-4 flex gap-2">
                     <button
                       onClick={() => router.push(`/books/${book.id}`)}
@@ -374,15 +368,20 @@ const DashboardPage: React.FC = () => {
 
 export default DashboardPage;
 
-/* Sidebar Item Component */
+/* ✅ Sidebar Item Component */
 const SidebarItem = ({
   icon,
   text,
+  onClick,
 }: {
   icon: React.ReactNode;
   text: string;
+  onClick?: () => void;
 }) => (
-  <button className="flex items-center gap-3 w-full text-left px-4 py-2 rounded-lg hover:bg-purple-100 dark:hover:bg-gray-700 transition">
+  <button
+    onClick={onClick}
+    className="flex items-center gap-3 w-full text-left px-4 py-2 rounded-lg hover:bg-purple-100 dark:hover:bg-gray-700 transition"
+  >
     {icon}
     <span>{text}</span>
   </button>

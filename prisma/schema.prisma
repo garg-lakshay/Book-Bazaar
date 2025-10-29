@@ -119,3 +119,4 @@ model TransactionLog {
   fee        Float
   createdAt  DateTime @default(now())
 }
+

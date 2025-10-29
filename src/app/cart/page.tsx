@@ -13,6 +13,7 @@ type CartBook = {
 
 const CartPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartBook[]>([]);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   // 🟢 Load cart from localStorage
@@ -28,12 +29,53 @@ const CartPage: React.FC = () => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
+  // 🟠 Proceed to Stripe Checkout
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return alert("Your cart is empty!");
+    setLoading(true);
+    try {
+      const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
+      const title =
+        cartItems.length === 1
+          ? cartItems[0].title
+          : `${cartItems.length} books purchase`;
+
+      const res = await fetch("/api/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, price: totalPrice }),
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url; // ✅ Redirect to Stripe checkout
+      } else {
+        alert("Payment session creation failed.");
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+      alert("Error processing payment.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
 
   return (
     <main className="min-h-screen p-10 bg-gray-100">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-3xl font-bold text-purple-700 mb-6">🛒 Your Cart</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-purple-700">🛒 Your Cart</h1>
+
+          {/* 🔙 Go Back Button */}
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300 transition"
+          >
+            ← Go Back
+          </button>
+        </div>
 
         {cartItems.length === 0 ? (
           <p className="text-gray-600 text-center">
@@ -81,8 +123,12 @@ const CartPage: React.FC = () => {
               <p className="text-xl font-semibold text-purple-700">
                 Total: ₹{totalPrice}
               </p>
-              <button className="bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-800 transition">
-                Proceed to Checkout
+              <button
+                onClick={handleCheckout}
+                disabled={loading}
+                className="bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-800 transition"
+              >
+                {loading ? "Processing..." : "Proceed to Checkout"}
               </button>
             </div>
           </>
