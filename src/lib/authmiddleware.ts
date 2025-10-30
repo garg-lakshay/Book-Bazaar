@@ -128,3 +128,47 @@ export async function verifyAuth(
     };
   }
 }
+// import { NextRequest, NextResponse } from "next/server";
+// import jwt from "jsonwebtoken";
+
+// // --- 1. Define the User Payload Structure ---
+// interface UserPayload {
+//     id: string;
+//     email: string;
+//     role: string;
+// }
+
+// // --- 2. Define the Authenticated Request Type (The Fix) ---
+// // This interface extends NextRequest and adds the 'user' property.
+// export interface AuthenticatedRequest extends NextRequest {
+//     user: UserPayload;
+// }
+
+// export async function verifyAuth(req: NextRequest) {
+//     try {
+//         const authHeader = req.headers.get("authorization");
+//         console.log("🔍 Received Authorization Header:", authHeader);
+
+//         if (!authHeader || !authHeader.startsWith("Bearer ")) {
+//             return { ok: false, error: "Missing or invalid token" };
+//         }
+
+//         const token = authHeader.split(" ")[1];
+        
+//         // Use the defined UserPayload interface for the decoded object
+//         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload; 
+
+//         // Cast the generic NextRequest to the specific AuthenticatedRequest type
+//         // This makes the 'user' property available and correctly typed
+//         const authReq = req as AuthenticatedRequest;
+        
+//         // Assign the decoded payload
+//         authReq.user = decoded; 
+
+//         // Return the correctly typed request object
+//         return { ok: true, req: authReq };
+//     } catch (err) {
+//         console.error("❌ Token verification failed:", err);
+//         return { ok: false, error: "Unauthorized" };
+//     }
+// }

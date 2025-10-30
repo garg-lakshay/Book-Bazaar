@@ -9,30 +9,158 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model User {
+//   id        String   @id @default(cuid())
+//   name      String
+//   email     String   @unique
+//   password  String
+//   role      String // "owner" | "seller" | "user"
+//   verified  Boolean  @default(false)
+//   createdAt DateTime @default(now())
+
+//   street  String?
+//   city    String?
+//   state   String?
+//   zipCode String?
+//   country String?
+
+//   sellerBooks        Book[]              @relation("SellerBooks")
+//   ownerBooks         Book[]              @relation("OwnerBooks")
+//   buyerOrders        Order[]             @relation("BuyerOrders")
+//   sellerOrders       Order[]             @relation("SellerOrders")
+//   cartItems          CartItem[]
+//   tokens             VerificationToken[]
+//   stripe             StripeAccount?
+//   sellerTransactions TransactionLog[]    @relation("SellerTransactions")
+// }
+
+// model VerificationToken {
+//   id        String   @id @default(cuid())
+//   token     String   @unique
+//   user      User     @relation(fields: [userId], references: [id])
+//   userId    String
+//   expiresAt DateTime
+// }
+
+// model StripeAccount {
+//   id         String   @id @default(cuid())
+//   user       User     @relation(fields: [userId], references: [id])
+//   userId     String   @unique
+//   accountId  String
+//   createdAt  DateTime @default(now())
+//   isVerified Boolean  @default(false)
+// }
+
+// model Book {
+//   id          String  @id @default(cuid())
+//   title       String
+//   author      String
+//   description String?
+//   price       Float
+//   stock       Int     @default(1)
+
+//   seller   User   @relation("SellerBooks", fields: [sellerId], references: [id])
+//   sellerId String
+
+//   owner   User   @relation("OwnerBooks", fields: [ownerId], references: [id])
+//   ownerId String
+
+//   createdAt DateTime @default(now())
+
+//   // ✅ keep old relation for backward compatibility
+//   orders Order[]
+
+//   // ✅ new relation for future multi-book order support
+//   orderItems OrderItem[]
+
+//   cartItems CartItem[]
+// }
+
+// model CartItem {
+//   id       String   @id @default(cuid())
+//   user     User     @relation(fields: [userId], references: [id])
+//   userId   String
+//   book     Book     @relation(fields: [bookId], references: [id])
+//   bookId   String
+//   quantity Int      @default(1)
+//   addedAt  DateTime @default(now())
+
+//   @@unique([userId, bookId])
+// }
+
+// model Order {
+//   id String @id @default(cuid())
+
+//   buyer   User   @relation("BuyerOrders", fields: [buyerId], references: [id])
+//   buyerId String
+
+//   seller   User   @relation("SellerOrders", fields: [sellerId], references: [id])
+//   sellerId String
+
+//   // ✅ keep old single-book relation so existing code still works
+//   book   Book   @relation(fields: [bookId], references: [id])
+//   bookId String
+
+//   total           Float
+//   status          String           @default("pending")
+//   createdAt       DateTime         @default(now())
+//   stripePaymentId String?
+//   transactions    TransactionLog[] @relation("OrderTransactions")
+
+//   // ✅ new optional relation for multiple books
+//   orderItems OrderItem[]
+// }
+
+// model OrderItem {
+//   id String @id @default(cuid())
+
+//   order   Order  @relation(fields: [orderId], references: [id])
+//   orderId String
+
+//   book   Book   @relation(fields: [bookId], references: [id])
+//   bookId String
+
+//   price Float
+// }
+
+// model TransactionLog {
+//   id String @id @default(cuid())
+
+//   order   Order  @relation("OrderTransactions", fields: [orderId], references: [id])
+//   orderId String
+
+//   seller   User   @relation("SellerTransactions", fields: [sellerId], references: [id])
+//   sellerId String
+
+//   amount    Float
+//   fee       Float
+//   createdAt DateTime @default(now())
+// }
+
+
 model User {
-  id          String    @id @default(cuid())
-  name        String
-  email       String    @unique
-  password    String
-  role        String    // "owner" | "seller" | "user"
-  verified    Boolean   @default(false)
-  createdAt   DateTime  @default(now())
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String // "owner" | "seller" | "user"
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
 
-  street      String?
-  city        String?
-  state       String?
-  zipCode     String?
-  country     String?
+  street  String?
+  city    String?
+  state   String?
+  zipCode String?
+  country String?
 
-  // Relations (explicit relation names required where User is referenced multiple times)
-  sellerBooks  Book[]   @relation("SellerBooks")
-  ownerBooks   Book[]   @relation("OwnerBooks")
-  buyerOrders  Order[]  @relation("BuyerOrders")
-  sellerOrders Order[]  @relation("SellerOrders")
-  cartItems    CartItem[]
-  tokens       VerificationToken[]
-  stripe       StripeAccount?
-  sellerTransactions TransactionLog[] @relation("SellerTransactions")
+  sellerBooks        Book[]              @relation("SellerBooks")
+  ownerBooks         Book[]              @relation("OwnerBooks")
+  buyerOrders        Order[]             @relation("BuyerOrders")
+  sellerOrders       Order[]             @relation("SellerOrders")
+  cartItems          CartItem[]
+  tokens             VerificationToken[]
+  stripe             StripeAccount?
+  sellerTransactions TransactionLog[]    @relation("SellerTransactions")
 }
 
 model VerificationToken {
@@ -47,29 +175,33 @@ model StripeAccount {
   id         String   @id @default(cuid())
   user       User     @relation(fields: [userId], references: [id])
   userId     String   @unique
-  accountId  String   // Stripe Connect account ID
+  accountId  String
   createdAt  DateTime @default(now())
   isVerified Boolean  @default(false)
 }
 
 model Book {
-  id          String    @id @default(cuid())
+  id          String  @id @default(cuid())
   title       String
   author      String
   description String?
   price       Float
-  stock       Int       @default(1)
+  stock       Int     @default(1)
 
-  // Relations to User (seller and owner) — relation names disambiguate them
-  seller      User      @relation("SellerBooks", fields: [sellerId], references: [id])
-  sellerId    String
+  seller   User   @relation("SellerBooks", fields: [sellerId], references: [id])
+  sellerId String
 
-  owner       User      @relation("OwnerBooks", fields: [ownerId], references: [id])
-  ownerId     String
+  owner   User   @relation("OwnerBooks", fields: [ownerId], references: [id])
+  ownerId String
 
-  createdAt   DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  orders      Order[]
+  // ✅ Explicitly name old order relation (so Prisma doesn't confuse with new one)
+  orders      Order[]     @relation("BookOrders")
+
+  // ✅ New relation for multi-book order support (won’t affect old code)
+  orderItems  OrderItem[]
+
   cartItems   CartItem[]
 }
 
@@ -81,42 +213,58 @@ model CartItem {
   bookId   String
   quantity Int      @default(1)
   addedAt  DateTime @default(now())
-  @@unique([userId, bookId]) // ensures one item per user-book pair
+
+  @@unique([userId, bookId])
 }
 
 model Order {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  // Buyer relation
-  buyer           User     @relation("BuyerOrders", fields: [buyerId], references: [id])
-  buyerId         String
+  buyer   User   @relation("BuyerOrders", fields: [buyerId], references: [id])
+  buyerId String
 
-  // Seller relation
-  seller          User     @relation("SellerOrders", fields: [sellerId], references: [id])
-  sellerId        String
+  seller   User   @relation("SellerOrders", fields: [sellerId], references: [id])
+  sellerId String
 
-  // Book relation
-  book            Book     @relation(fields: [bookId], references: [id])
-  bookId          String
+  // ✅ Keep the old single-book relation for backward compatibility
+  book   Book   @relation("BookOrders", fields: [bookId], references: [id])
+  bookId String
 
   total           Float
-  status          String   @default("pending") // "pending" | "paid" | "shipped"
-  createdAt       DateTime @default(now())
+  status          String           @default("pending")
+  createdAt       DateTime         @default(now())
   stripePaymentId String?
   transactions    TransactionLog[] @relation("OrderTransactions")
+
+  // ✅ New optional relation for multiple books (used in updated payment route)
+  orderItems OrderItem[]
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+
+  order   Order  @relation(fields: [orderId], references: [id])
+  orderId String
+
+  // ✅ Link to Book — this does not conflict with the old `BookOrders` relation
+  book   Book   @relation(fields: [bookId], references: [id])
+  bookId String
+
+  price Float
 }
 
 model TransactionLog {
-  id         String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  order      Order    @relation("OrderTransactions", fields: [orderId], references: [id])
-  orderId    String
+  order   Order  @relation("OrderTransactions", fields: [orderId], references: [id])
+  orderId String
 
-  seller     User     @relation("SellerTransactions", fields: [sellerId], references: [id])
-  sellerId   String
+  seller   User   @relation("SellerTransactions", fields: [sellerId], references: [id])
+  sellerId String
 
-  amount     Float
-  fee        Float
-  createdAt  DateTime @default(now())
+  amount    Float
+  fee       Float
+  createdAt DateTime @default(now())
 }
+
 

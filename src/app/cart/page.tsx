@@ -29,32 +29,58 @@ const CartPage: React.FC = () => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  // 🟠 Proceed to Stripe Checkout
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  console.log("🪙 Token fetched from localStorage:", token);
+
+  // 🟠 Proceed to Stripe Checkout (with redirect)
   const handleCheckout = async () => {
-    if (cartItems.length === 0) return alert("Your cart is empty!");
+    if (cartItems.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+
     setLoading(true);
     try {
       const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
-      const title =
-        cartItems.length === 1
-          ? cartItems[0].title
-          : `${cartItems.length} books purchase`;
+      const amount = Math.round(Number(totalPrice) * 100);
 
       const res = await fetch("/api/payment", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, price: totalPrice }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          amount,
+          currency: "inr",
+          productName:
+            cartItems.length === 1
+              ? cartItems[0].title
+              : `${cartItems.length} books purchase`,
+          bookIds: cartItems.map((item) => item.id), // Add book IDs to request
+        }),
       });
 
       const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url; // ✅ Redirect to Stripe checkout
-      } else {
-        alert("Payment session creation failed.");
+      console.log("Debug - Payment Response:", data); // Add this debug log
+
+      if (!res.ok) {
+        throw new Error(data.error || `Payment failed with status: ${res.status}`);
       }
-    } catch (err) {
-      console.error("Checkout error:", err);
-      alert("Error processing payment.");
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("Payment URL not received from server");
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Payment initialization failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

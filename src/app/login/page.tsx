@@ -27,27 +27,28 @@ export default function LoginPage() {
       if (!res.ok) throw new Error("Invalid credentials");
       const data = await res.json();
 
-    
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      console.log("✅ Token saved:", data.token);
-    } else {
-      console.warn("⚠️ No token returned from backend");
-    }
-    if (data.user) {
-        localStorage.setItem("userRole", data.user.role); // ✅ IMPORTANT
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        console.log("✅ Token saved:", data.token);
+      } else {
+        console.warn("⚠️ No token returned from backend");
+      }
+
+      if (data.user) {
+        localStorage.setItem("userRole", data.user.role);
         localStorage.setItem("userId", data.user.id);
         console.log("✅ Role saved:", data.user.role);
       }
 
-
-    if (data.user.role === "SELLER") {
-        router.push("/seller/dashboard");
+      // ✅ Redirect based on role (slight delay for localStorage to finish)
+      if (data.user.role === "SELLER") {
+        setTimeout(() => router.push("/seller/dashboard"), 200);
       } else if (data.user.role === "OWNER") {
-        router.push("/owner/dashboard");
+        setTimeout(() => router.push("/owner/dashboard"), 200);
       } else {
-        router.push("/dashboard");
+        setTimeout(() => router.push("/dashboard"), 200);
       }
+
     } catch (err) {
       setError("Invalid email or password");
       console.error(err);
@@ -104,7 +105,6 @@ export default function LoginPage() {
           </a>
         </p>
 
-        {/* ❤️ Signature */}
         <p className="text-center text-xs mt-8 text-gray-500">
           Made with <span className="animate-pulse text-red-500">❤️</span> by{" "}
           <span className="font-medium text-purple-700">Lakshay Garg</span>
