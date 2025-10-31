@@ -37,10 +37,15 @@ export default function BookDetailsPage() {
 
   const handleBuy = async () => {
     try {
+      // const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
+      // const amount = Math.round(Number(totalPrice) * 100);
+      const price = Math.round(Number(book?.price) * 100);
+
+
       const res = await fetch("/api/payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: book?.title, price: book?.price }),
+        body: JSON.stringify({ title: book?.title, amount: price }),
       });
 
       const data = await res.json();

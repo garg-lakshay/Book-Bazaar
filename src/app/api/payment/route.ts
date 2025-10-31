@@ -123,25 +123,11 @@ const stripe = new Stripe(stripeSecret, { apiVersion: "2025-09-30.clover" });
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { amount, currency = "inr", productName, bookIds } = body; // Add bookIds
+    const { amount, currency = "inr", productName } = body;
 
-    // Validate input: amount must be an integer representing smallest currency unit
-    if (
-      typeof amount !== "number" ||
-      !Number.isFinite(amount) ||
-      amount <= 0 ||
-      !Number.isInteger(amount)
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            "Invalid or missing 'amount' (integer, smallest currency unit required)",
-        },
-        { status: 400 }
-      );
-    }
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-    // Create Checkout Session with metadata
+    // Create Checkout Session with proper URL schemes
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -155,10 +141,10 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: "http://localhost:3000/success",
-      cancel_url: "http://localhost:3000/cancel",
+      success_url: `${baseUrl}/success`, // Will automatically include http:// or https://
+      cancel_url: `${baseUrl}/cancel`,
       metadata: {
-        bookIds: JSON.stringify(bookIds), // Store book IDs in metadata
+        bookIds: JSON.stringify(body.bookIds || []),
       },
     });
 
