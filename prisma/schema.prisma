@@ -224,12 +224,12 @@ model Order {
   buyer   User   @relation("BuyerOrders", fields: [buyerId], references: [id])
   buyerId String
 
-  seller   User   @relation("SellerOrders", fields: [sellerId], references: [id])
-  sellerId String
+  seller   User?   @relation("SellerOrders", fields: [sellerId], references: [id])
+  sellerId String?
 
   // ✅ Keep the old single-book relation for backward compatibility
-  book   Book   @relation("BookOrders", fields: [bookId], references: [id])
-  bookId String
+  book   Book?  @relation("BookOrders", fields: [bookId], references: [id])
+  bookId String?
 
   total           Float
   status          String           @default("pending")
@@ -250,6 +250,7 @@ model OrderItem {
   // ✅ Link to Book — this does not conflict with the old `BookOrders` relation
   book   Book   @relation(fields: [bookId], references: [id])
   bookId String
+  quantity Int    @default(1)
 
   price Float
 }

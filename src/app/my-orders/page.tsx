@@ -16,6 +16,7 @@ type Order = {
 export default function MyOrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
+  const [totalItems, setTotalItems] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,6 +35,8 @@ export default function MyOrdersPage() {
         const data = await res.json();
         if (res.ok) {
           setOrders(data.orders);
+          setTotalItems(data.totalItems || data.orders.length);
+
         } else {
           console.error(data.error);
         }
@@ -55,23 +58,30 @@ export default function MyOrdersPage() {
         📦 My Orders
       </h1>
 
+      
+
       {orders.length === 0 ? (
         <p className="text-center text-gray-500">No orders found.</p>
       ) : (
+        // 
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {orders.map((order) => (
-            <li key={order.id} className="p-4 bg-white rounded-xl shadow-md">
-              <h2 className="text-lg font-semibold">{order.book.title}</h2>
-              <p className="text-gray-600">{order.book.author}</p>
-              <p className="font-bold text-purple-600 mt-2">
-                ₹{order.book.price}
-              </p>
-              <p className="text-sm text-gray-400 mt-1">
-                Purchased on {new Date(order.createdAt).toLocaleDateString()}
-              </p>
-            </li>
-          ))}
-        </ul>
+  {orders.map((order) => (
+    <li key={order.id} className="p-4 bg-white rounded-xl shadow-md">
+      <h2 className="text-lg font-semibold">{order.book.title}</h2>
+      <p className="text-gray-600">{order.book.author}</p>
+      <p className="font-bold text-purple-600 mt-2">₹{order.book.price}</p>
+      <p className="text-sm text-gray-400 mt-1">
+        Purchased on {new Date(order.createdAt).toLocaleDateString()}
+      </p>
+
+      {/* ✅ Total books in this order */}
+      <p className="text-sm text-purple-600 mt-2 font-medium">
+        Total Books in Order: 1
+      </p>
+    </li>
+  ))}
+</ul>
+
       )}
 
       <div className="text-center mt-8">

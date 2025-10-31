@@ -12,4 +12,4 @@
 //         select: { id: true, name: true, email: true, createdAt: true },
 //     });
 
-//     return NextResponse.json({ owners });   
+//     return NextResponse.json({ owners });

@@ -78,12 +78,12 @@ export default function BookDetailsPage() {
             Go Back
           </button>
 
-          <button
+          {/* <button
             onClick={handleBuy}
             className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
           >
             Buy Now 💳
-          </button>
+          </button> */}
         </div>
       </div>
     </main>

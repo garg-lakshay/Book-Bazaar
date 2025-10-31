@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
       success: true,
       message: "✅ Orders saved successfully",
       count: createdOrders.length,
+      totalItems: items.length,
     });
   } catch (err) {
     console.error("❌ Error saving order:", err);
@@ -72,13 +73,13 @@ export async function GET(req: NextRequest) {
       },
       include: {
         book: {
-          select: { id: true, title: true, author: true, price: true },
+          select: { id: true, title: true, author: true, price: true,  },
         },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ orders });
+    return NextResponse.json({ orders, totalItems: orders.length,});
   } catch (err) {
     console.error("❌ Error fetching orders:", err);
     return NextResponse.json(
