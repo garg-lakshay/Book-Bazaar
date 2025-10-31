@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📚 **BookBazaar**
 
-## Getting Started
+BookBazaar is a full-stack e-commerce marketplace for buying and selling books online. It offers secure authentication, role-based access, shopping cart management, order tracking, and integrated payments through Stripe.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Authentication & Authorization**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- JWT-based login & registration
+- Role-based access (User, Seller, Owner)
+- Password hashing with bcrypt
+- Token persistence via localStorage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Book Management**
 
-## Learn More
+- Browse, search, and view book details
+- Stock & reservation system
+- Seller association per book
 
-To learn more about Next.js, take a look at the following resources:
+**Shopping Cart**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Add multiple books with quantity control
+- Local storage persistence
+- Real-time stock validation
+- Update or remove items
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Orders**
 
-## Deploy on Vercel
+- Multi-book order support
+- Order history & tracking
+- Stripe payment ID linkage
+- Status updates on successful payment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Payments (Stripe)**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Stripe Checkout integration (INR)
+- Stripe Connect for seller payouts
+- Webhook for real-time payment updates
+- Secure session handling
+
+**Seller Dashboard**
+
+- Add & manage book listings
+- View transaction history
+- Stripe onboarding & account management
+
+**UI/UX**
+
+- Built with Next.js + Tailwind CSS
+- Responsive & modern design
+- Dark mode toggle
+- Smooth animations via Framer Motion
+
+---
+
+### 🧱 Tech Stack
+
+**Frontend:**
+Next.js 15, React 19, TypeScript 5, Tailwind CSS 4, Framer Motion, Lucide Icons, Stripe.js / React-Stripe
+
+**Backend:**
+Next.js API Routes, Prisma ORM (PostgreSQL), JWT & bcryptjs, Stripe (Checkout + Connect), Nodemailer (optional)
+
+---
+
+### 🗄️ Database Models
+
+- User – Authentication, roles, address, Stripe link
+- Book – Title, author, price, stock, seller
+- CartItem – User-book quantity tracking
+- Order / OrderItem – Buyer, seller, books, total, payment
+- TransactionLog – Seller transactions
+- StripeAccount – Seller payout management
+- VerificationToken – Email verification
+
+---
+
+### 👥 Roles & Permissions
+
+**User:** Browse, buy, view orders
+**Seller:** Add/manage books, receive payments
+**Owner:** All permissions (admin control)
+
+---
+
+### 🔁 Core Flows
+
+1. User Registration/Login → JWT token generated
+2. Book Browsing → Search, view details
+3. Cart Management → Add/update/remove items
+4. Checkout & Payment → Stripe Checkout → Webhook update
+5. Seller Listing → Add/manage books via dashboard
+
+---
+
+### 🔒 Security
+
+- Password hashing with bcrypt
+- JWT-based session management
+- Role-based route protection
+- Secure Stripe webhooks
+
+---
+
+### 🌍 Deployment
+
+- Vercel (recommended for Next.js)
+- PostgreSQL database required
+- Stripe API keys setup in environment variables
+
+---
+
+👨‍💻 **Author:**
+Lakshay Garg
+Full Stack Developer
