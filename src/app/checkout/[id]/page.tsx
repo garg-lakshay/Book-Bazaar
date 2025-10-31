@@ -7,43 +7,51 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import { use } from "react";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
-export default function CheckoutPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default function CheckoutPage({ params }: PageProps) {
+  // Unwrap the params Promise using React.use()
+  const resolvedParams = use(params);
   const [clientSecret, setClientSecret] = useState("");
+
   useEffect(() => {
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-  console.log("🪙 Token fetched from localStorage:", token);
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    console.log("🪙 Token fetched from localStorage:", token);
 
-  if (!token) {
-    alert("Please log in to make a purchase.");
-    return;
-  }
-  console.log("Passed bookId to API:", params.id);  
-  
+    if (!token) {
+      alert("Please log in to make a purchase.");
+      return;
+    }
+    console.log("Passed bookId to API:", resolvedParams.id);
 
-  fetch("/api/payment", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`, // ✅ send token properly
-    },
-    body: JSON.stringify({ bookId: params.id }),
-  })
-    .then(async (res) => {
-      const data = await res.json();
-      console.log("💳 Payment API response:", data);
-      if (data?.clientSecret) setClientSecret(data.clientSecret);
-      else alert(data.error || "Failed to start payment.");
+    fetch("/api/payment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ bookId: resolvedParams.id }),
     })
-    .catch((err) => {
-      console.error("❌ Payment request failed:", err);
-    });
-}, [params.id]);
-
+      .then(async (res) => {
+        const data = await res.json();
+        console.log("💳 Payment API response:", data);
+        if (data?.clientSecret) setClientSecret(data.clientSecret);
+        else alert(data.error || "Failed to start payment.");
+      })
+      .catch((err) => {
+        console.error("❌ Payment request failed:", err);
+      });
+  }, [resolvedParams.id]);
 
   const options = { clientSecret };
 

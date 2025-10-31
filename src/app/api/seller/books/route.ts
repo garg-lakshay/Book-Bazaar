@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma";
 import { verifyAuth } from "@/lib/authmiddleware";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { AuthenticatedNextRequest } from "@/lib/types";
 
-export async function GET(req: AuthenticatedNextRequest) {
+export async function GET(req: NextRequest) {
   const auth = await verifyAuth(req, ["SELLER"]);
   if (!auth.ok) return auth.res!;
 

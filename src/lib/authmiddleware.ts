@@ -1,7 +1,7 @@
 // import { NextResponse, NextRequest } from "next/server";
 // import jwt from "jsonwebtoken";
 // import { AuthenticatedNextRequest } from "./types";
-// type Handler = (req: AuthenticatedNextRequest) => Promise<NextResponse>;
+// type Handler = (req:NextRequest) => Promise<NextResponse>;
 
 // export const authMiddleware = (allowedRoles: string[] = []) => {
 //   return async (handler: Handler) => {
@@ -77,9 +77,12 @@ import { AuthenticatedNextRequest } from "./types";
 export async function verifyAuth(
   req: NextRequest,
   allowedRoles: string[] = []
-): Promise<{ ok: boolean; res?: NextResponse; req?: AuthenticatedNextRequest }> {
+): Promise<{
+  ok: boolean;
+  res?: NextResponse;
+  req?: AuthenticatedNextRequest;
+}> {
   try {
-    
     const authHeader =
       req.headers.get("Authorization") || req.headers.get("authorization");
 
@@ -92,7 +95,6 @@ export async function verifyAuth(
       };
     }
 
-    
     const token = authHeader.split(" ")[1];
     if (!token) {
       return {
@@ -124,7 +126,10 @@ export async function verifyAuth(
     console.error("Auth error:", err);
     return {
       ok: false,
-      res: NextResponse.json({ error: "Invalid or expired token" }, { status: 401 }),
+      res: NextResponse.json(
+        { error: "Invalid or expired token" },
+        { status: 401 }
+      ),
     };
   }
 }
@@ -154,16 +159,16 @@ export async function verifyAuth(
 //         }
 
 //         const token = authHeader.split(" ")[1];
-        
+
 //         // Use the defined UserPayload interface for the decoded object
-//         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload; 
+//         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
 
 //         // Cast the generic NextRequest to the specific AuthenticatedRequest type
 //         // This makes the 'user' property available and correctly typed
 //         const authReq = req as AuthenticatedRequest;
-        
+
 //         // Assign the decoded payload
-//         authReq.user = decoded; 
+//         authReq.user = decoded;
 
 //         // Return the correctly typed request object
 //         return { ok: true, req: authReq };

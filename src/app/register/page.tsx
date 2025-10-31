@@ -7,7 +7,7 @@ interface FormData {
   name: string;
   email: string;
   password: string;
-  role: "USER" | "SELLER" | "OWNER";
+  role: "USER" | "SELLER";
 }
 
 export default function RegisterPage() {
@@ -99,14 +99,13 @@ export default function RegisterPage() {
             onChange={(e) =>
               setFormData({
                 ...formData,
-                role: e.target.value as "USER" | "SELLER" | "OWNER",
+                role: e.target.value as "USER" | "SELLER",
               })
             }
             className="w-full px-4 py-2 border rounded-lg focus:outline-none"
           >
             <option value="USER">User</option>
             <option value="SELLER">Seller</option>
-            <option value="OWNER">Owner</option>
           </select>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}

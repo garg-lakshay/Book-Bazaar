@@ -1,10 +1,9 @@
-
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { verifyAuth } from "@/lib/authmiddleware";
 import { AuthenticatedNextRequest } from "@/lib/types";
 
-export async function POST(req: AuthenticatedNextRequest) {
+export async function POST(req: NextRequest) {
   // ✅ Step 1: Verify token and role
   const auth = await verifyAuth(req, ["SELLER"]);
   if (!auth.ok) return auth.res!; // Stop if unauthorized
@@ -12,7 +11,10 @@ export async function POST(req: AuthenticatedNextRequest) {
   // ✅ Step 2: Extract book details
   const { title, author, price, stock, description } = await req.json();
   if (!title || !author || !price || !stock) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing required fields" },
+      { status: 400 }
+    );
   }
 
   // ✅ Step 3: Create book
@@ -28,10 +30,8 @@ export async function POST(req: AuthenticatedNextRequest) {
     },
   });
 
-  return NextResponse.json({ message: "Book added successfully!", book: newBook }, { status: 201 });
+  return NextResponse.json(
+    { message: "Book added successfully!", book: newBook },
+    { status: 201 }
+  );
 }
-
-
-
-
-

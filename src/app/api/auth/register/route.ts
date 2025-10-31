@@ -1,4 +1,4 @@
-// import { NextResponse } from "next/server";
+// import { NextResponse, NextRequest } from "next/server";
 // import bcrypt from "bcryptjs";
 // import prisma from "@/lib/prisma";
 
@@ -46,7 +46,7 @@
 //     );
 //   }
 // }
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 
