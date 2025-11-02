@@ -41,6 +41,7 @@ const CartPage: React.FC = () => {
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
+  
 
   // 🟣 Update quantity — local only, with stock limit check
   const updateQuantity = (bookId: string, change: number) => {
