@@ -10,6 +10,8 @@ interface FormData {
   role: "USER" | "SELLER";
 }
 
+
+
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
@@ -134,3 +136,4 @@ export default function RegisterPage() {
     </main>
   );
 }
+
