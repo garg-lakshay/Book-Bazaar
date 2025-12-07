@@ -2,6 +2,7 @@
 
 ## Project Overview
 
+
 BookBazaar is a full-stack e-commerce marketplace platform designed for buying and selling books online. It provides a comprehensive solution where users can browse books, manage their shopping cart, complete purchases, and sellers can list their books and receive payments through Stripe integration. The platform supports multiple user roles with distinct permissions and capabilities.
 
 ## Key Features
@@ -319,4 +320,5 @@ The application is built with Next.js and can be deployed on:
 - Requires PostgreSQL database
 - Requires Stripe account with API keys
 - Environment variables for secrets configuration
+
 
