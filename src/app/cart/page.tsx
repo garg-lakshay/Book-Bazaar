@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+
 type CartItem = {
   id: string;
   title: string;
@@ -221,3 +222,4 @@ const CartPage: React.FC = () => {
 };
 
 export default CartPage;
+
